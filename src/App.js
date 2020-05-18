@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { API, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation, Auth } from "aws-amplify";
 import { createTodo } from "./graphql/mutations";
 import { listTodos } from "./graphql/queries";
 import { withAuthenticator, AmplifySignOut } from "@aws-amplify/ui-react";
@@ -9,9 +9,19 @@ const initialState = { name: "", description: "" };
 const App = () => {
   const [formState, setFormState] = useState(initialState);
   const [todos, setTodos] = useState([]);
+  const [currentUser, setCurrentUser] = useState({
+    username: null,
+    user_id: null,
+  });
 
   useEffect(() => {
     fetchTodos();
+    Auth.currentUserInfo()
+      .then((user) => {
+        const { username, id } = user;
+        setCurrentUser({ username, user_id: id });
+      })
+      .catch((err) => console.log("err : ", err));
   }, []);
 
   function setInput(key, value) {
@@ -31,7 +41,8 @@ const App = () => {
   async function addTodo() {
     try {
       if (!formState.name || !formState.description) return;
-      const todo = { ...formState };
+
+      const todo = { ...formState, ...currentUser };
       setTodos([...todos, todo]);
       setFormState(initialState);
       await API.graphql(graphqlOperation(createTodo, { input: todo }));
@@ -61,7 +72,9 @@ const App = () => {
       </button>
       {todos.map((todo, index) => (
         <div key={todo.id ? todo.id : index} style={styles.todo}>
+          <p style={styles.todoName}>{todo.username}</p>
           <p style={styles.todoName}>{todo.name}</p>
+          <p style={styles.todoName}>{JSON.stringify(todo)}</p>
           <p style={styles.todoDescription}>{todo.description}</p>
         </div>
       ))}

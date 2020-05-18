@@ -7,6 +7,8 @@ export const getTodo = /* GraphQL */ `
       id
       name
       description
+      username
+      user_id
     }
   }
 `;
@@ -21,6 +23,8 @@ export const listTodos = /* GraphQL */ `
         id
         name
         description
+        username
+        user_id
       }
       nextToken
     }

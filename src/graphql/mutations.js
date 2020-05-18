@@ -10,6 +10,8 @@ export const createTodo = /* GraphQL */ `
       id
       name
       description
+      username
+      user_id
     }
   }
 `;
@@ -22,6 +24,8 @@ export const updateTodo = /* GraphQL */ `
       id
       name
       description
+      username
+      user_id
     }
   }
 `;
@@ -34,6 +38,8 @@ export const deleteTodo = /* GraphQL */ `
       id
       name
       description
+      username
+      user_id
     }
   }
 `;
